@@ -33,10 +33,10 @@ class TraitNetwork():
     def create_node(self, name):
         return Trait(name)
 
-    def calc_association(self, object, trait_1, trait_2):
+    def calc_association(self, object_traits, trait_1, trait_2):
         '''This method will return an association value based off of a predetermined formula'''
         association = float()
-        association = object['traits'][trait_1] + object['traits'][trait_2]
+        association = (object_traits[trait_1] + object_traits[trait_2])/2
         return association
 
     def subtract_sets(self, list_1, list_2):
@@ -46,7 +46,6 @@ class TraitNetwork():
     
     def build_associations(self, object):
         object_traits = object['traits']
-        # ingredients = object['ingredients']
         traits_checked = list() # keeps track of traits we've already checked in this object
         for trait in object_traits: # for each trait in that object
             
@@ -55,9 +54,15 @@ class TraitNetwork():
 
             traits_checked.append(trait) # keeps track of traits we've already checked in this object
             for other_trait in self.subtract_sets(object_traits, traits_checked): # we look at all other traits that haven't been checked yet
-                association = self.calc_association(object, trait, other_trait)
-                self.nodes[trait].add_count(other_trait, association) # add the association value to the node
+                association = self.calc_association(object_traits, trait, other_trait)
+
+                self.nodes[trait].add_count(other_trait, association) # add the association value to the first node
+
+                if other_trait not in self.nodes.keys(): # if we don't have that trait as a node
+                    self.nodes[other_trait] = self.create_node(other_trait) # we create it
     
+                self.nodes[other_trait].add_count(trait, association) # build the association in the opposite direction as well
+
     def generate_nodes(self, objects):
         ''' Runtime is O(N^2) (where N is the number of objects) because each 
             trait needs to be check against the other traits in each object'''
