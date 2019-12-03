@@ -1,5 +1,6 @@
 from traitnetwork import TraitNetwork
 from collections import namedtuple
+from recommender import DrinkRecommender
 
 class GenericObj():
     def __init__(self, name):
@@ -26,9 +27,8 @@ drink_list = [drink1, drink2, drink3]
 def main():
     import sys
     arguments = sys.argv[1:]
-
-    drink_network = TraitNetwork(drink_list)
-    print(drink_network.nodes)
+    drink_network = DrinkRecommender(drink_list)
+    drink_network.get_recommendations('Lime')
 
 
 if __name__ == '__main__':
